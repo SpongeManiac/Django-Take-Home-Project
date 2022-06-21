@@ -1,0 +1,36 @@
+.grey_frame {
+    text-align: center;
+    background-color: lightgray;
+    border-radius: 50px;
+    width: fit-content;
+    padding: 20px;
+    margin: auto;
+}
+  
+
+.inputWrapper{
+    display: flex;
+}
+
+.inputWrapper label{
+    padding-right: 20px; 
+}
+
+.inputWrapper input{
+    margin-left: auto;
+}
+
+.errorWrapper{
+    border-style: solid;
+    border-color: red;
+    border-width: 1px;
+    background-color: lightcoral;
+    border-radius: 5px;
+    text-align: left;
+    padding: 5px;
+    margin: 10px;
+}
+
+.errorlist{
+    margin: 0px;
+}

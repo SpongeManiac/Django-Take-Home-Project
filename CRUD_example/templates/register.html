@@ -1,0 +1,61 @@
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/forms/forms.css' %}">
+<div class="grey_frame">
+    <h2>Sign Up</h2>
+
+    <form action='/register/' method='post'>
+        {% csrf_token %}
+
+        {% if form.non_field_errors%}
+        <div class="errorWrapper">
+            {{ form.non_field_errors }}
+        </div>
+        {% endif %}
+
+        <p></p>
+
+        <div class="fieldWrapper">
+            {% if form.email.errors %}
+            <div class="errorWrapper">
+                {{ form.email.errors }}
+            </div>
+            {% endif %}
+            <div class="inputWrapper">
+                {{ form.email.label_tag }}
+                {{ form.email }}
+            </div>
+        </div>
+
+        <p></p>
+
+        <div class="fieldWrapper">
+            {% if form.password1.errors %}
+            <div class="errorWrapper">
+                {{ form.password1.errors }}
+            </div>
+            {% endif %}
+            <div class="inputWrapper">
+                {{ form.password1.label_tag }}
+                {{ form.password1 }}
+            </div>
+        </div>
+
+        <p></p>
+
+        <div class="fieldWrapper">
+            {% if form.password2.errors %}
+            <div class="errorWrapper">
+                {{ form.password2.errors }}
+            </div>
+            {% endif %}
+            <div class="inputWrapper">
+                {{ form.password2.label_tag }}
+                {{ form.password2 }}
+            </div>
+        </div>
+
+        <p></p>
+
+        <button type="submit">Register</button>
+    </form>
+</div>

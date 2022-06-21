@@ -1,0 +1,10 @@
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/forms/forms.css' %}">
+<div class="grey_frame">
+    <h2>Log Out</h2>
+    <form action="/login/" method="post">
+        {% csrf_token %}
+        <p>Please confirm that you wish to log out.</p>
+        <button type="submit">Log Out</button>
+    </form>
+</div>

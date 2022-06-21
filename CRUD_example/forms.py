@@ -1,0 +1,67 @@
+from urllib import request
+from django import forms
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.forms import UserCreationForm
+from django.utils.translation import gettext as _
+from django.forms.utils import ErrorList
+from django.core.exceptions import ValidationError
+from CRUD_example.models import *
+
+class RegisterForm(forms.Form):
+    email = forms.EmailField(required=True, max_length=512, label='Email')
+    password1 = forms.CharField(widget=forms.PasswordInput(), label='Password')
+    password2 = forms.CharField(widget=forms.PasswordInput(), label='Confirm Password')
+
+    class Meta:
+        model = User
+        fields = ('email', 'password1', 'password2')
+
+    def clean(self):
+        #clean the data
+        cleaned_data = super().clean()
+        
+        #check if passwords match
+        p1 = cleaned_data['password1']
+        p2 = cleaned_data['password2']
+
+        if len(p1) <= 5 or len(p2) <= 5:
+            self.add_error(None, ValidationError(_('Password must be at least 6 characters long.')))
+
+        #check if p1 == p2
+        if not p1 == p2:
+            self.add_error(None, ValidationError(_('Passwords do not match.')))
+        
+        return cleaned_data
+
+    def save(self):
+        user = User.objects.create_user(email=self.cleaned_data['email'], password=self.cleaned_data['password1'])
+        user.save()
+        return user
+
+class LoginForm(forms.Form):
+    email = forms.EmailField(required=True, max_length=512, label='Email')
+    password = forms.CharField(widget=forms.PasswordInput(), label='Password')
+
+    class Meta:
+        model = Login
+        fields = ('email', 'password')
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        e = cleaned_data['email']
+        p = cleaned_data['password']
+
+        if len(e) == 0:
+            self.add_error('email', ValidationError(_('Must have email')))
+
+        if len(p) <= 5:
+            self.add_error('password', ValidationError(_('Password must be at least 6 characters long.')))
+
+        return cleaned_data
+
+    def auth(self):
+        return authenticate(username=self.cleaned_data['email'], password=self.cleaned_data['password'])
+
+    def auth_failed(self):
+        self.add_error(None, ValidationError(_('Login credentials invalid.')))
