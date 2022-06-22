@@ -1,0 +1,47 @@
+.greetingWrapper{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 5px;
+}
+
+.greetingWrapper h2, h3{
+    margin: 0;
+    margin-right: 10px;
+}
+
+.greetingWrapper button{
+    margin-left: auto;
+    height: 2em;
+}
+
+.buttonNavWrapper{
+    margin-left: auto;
+}
+
+.listWrapper{
+    background-color: lightgrey;
+    text-align: left;
+    border-radius: 50px;
+    padding: 20px;
+}
+
+.listTitleWrapper{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0, 10px, 0, 10px;
+    margin: 5px;
+}
+
+.listTitleWrapper button{
+    margin-left: auto;
+}
+
+.tableDeleteButton{
+    background-color: lightcoral;
+    border-style: solid;
+    border-color: red;
+    border-radius: 5px;
+    color: white;
+}

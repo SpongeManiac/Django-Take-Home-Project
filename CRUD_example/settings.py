@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django_cryptography',
     'rest_framework',
     'rest_framework.authtoken',
+    'django_tables2',
     'CRUD_example',
 ]
 

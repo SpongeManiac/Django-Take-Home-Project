@@ -65,3 +65,42 @@ class LoginForm(forms.Form):
 
     def auth_failed(self):
         self.add_error(None, ValidationError(_('Login credentials invalid.')))
+
+class NewCustomerForm(forms.Form):
+    name = forms.CharField(required=True, max_length=255)
+
+    class Meta:
+        model = Customer
+        fields = ('name', )
+    
+    def clean(self):
+        cleaned_data = super().clean()
+
+        n = cleaned_data['name']
+        if len(n) <= 0:
+            self.add_error('name', ValidationError(_('Name must have at least 1 character')))
+
+        return cleaned_data
+    
+    def save(self):
+        customer = Customer(name=self.cleaned_data['name'])
+        customer.save()
+
+class EditCustomerForm(forms.ModelForm):
+    class Meta:
+        model = Customer
+        fields = ('name', )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        n = cleaned_data['name']
+        if len(n) <= 0:
+            self.add_error('name', ValidationError(_('Name must have at least 1 character')))
+        
+        return cleaned_data
+
+    def save(self, id):
+        customer = Customer.objects.filter(pk=id)
+        if customer.exists():
+            customer.update(name = self.cleaned_data['name'])

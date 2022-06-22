@@ -1,0 +1,17 @@
+<div class="greetingWrapper">
+    {% if user.is_authenticated %}
+    <h2>Logged in as: {{user.get_username}}</h2>
+    <div class="buttonNavWrapper">
+        {% if request.path != '/' %}
+        <button onclick="location.href = '/'">Home</button>
+        {% endif %}
+        <button onclick="location.href = '/logout'">Log out</button>
+    </div>
+    {%else%}
+    <h2> Please log in. </h2>
+    <div class="buttonNavWrapper">
+        <button onclick="location.href = '/login'">Log in</button>
+        <button onclick="location.href = '/register'">Register</button>
+    </div>
+    {%endif%}
+</div>

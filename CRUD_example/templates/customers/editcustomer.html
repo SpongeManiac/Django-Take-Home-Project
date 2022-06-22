@@ -1,0 +1,38 @@
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/forms/forms.css' %}">
+{% include "greeting.html" %}
+
+<div class="grey_frame">
+  <h2>Edit Customer</h2>
+  <form action="{% url 'editcustomer' form.instance.id %}" method="post">
+    {% csrf_token %}
+
+    {% if form.non_field_errors%}
+      <div class="errorWrapper">
+      {{ form.non_field_errors }}
+      </div>
+    {% endif %}
+    
+    <p></p>
+
+    <div class="fieldWrapper">
+      {% if form.name.errors%}
+      <div class="errorWrapper">
+        {{ form.name.errors }}
+      </div>
+      {% endif %}
+      <div class="inputWrapper">
+        {{ form.name.label_tag }}
+        {{ form.name }}
+      </div>
+    </div>
+
+    <p></p>
+
+    <div class="submitWrapper">
+      <button type="submit">Update</button>
+      <button type="button" onclick="location.href = '/customers'">Cancel</button>
+    </div>
+  </form>
+</div>

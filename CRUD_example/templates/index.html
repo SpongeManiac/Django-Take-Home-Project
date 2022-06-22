@@ -1,0 +1,25 @@
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/forms/forms.css' %}">
+{% include "greeting.html" %}
+<div class='grey_frame'>
+    {% if user.is_authenticated %}
+    <h2>Data Management</h2>
+    <div class="inner_frame">
+        <div class="greetingWrapper">
+            <h3>Customers</h3>
+            <button onclick="location.href = '/customers'">Manage</button>
+        </div>
+        <div class="greetingWrapper">
+            <h3>Software</h3>
+            <button onclick="location.href = '/software'">Manage</button>
+        </div>
+        <div class="greetingWrapper">
+            <h3>Customer Software</h3>
+            <button onclick="location.href = '/customersoftware'">Manage</button>
+        </div>
+    </div>
+    {%else%}
+    <h1>Please log in to manage data.</h1>
+    {%endif%}
+</div>
