@@ -25,6 +25,9 @@ from CRUD_example.views import (
     EditCustomerView,
     DelCustomerView,
     SoftwareView,
+    NewSoftwareView,
+    EditSoftwareView,
+    DelSoftwareView,
     CustomerSoftwareView,
 )
 
@@ -43,6 +46,9 @@ urlpatterns = [
     path('customers/delete/<int:id>', DelCustomerView.as_view(), name='delcustomer'),
 
     path('software/', SoftwareView.as_view(), name='software'),
+    path('software/create', NewSoftwareView.as_view(), name='newsoftware'),
+    path('software/edit/<int:id>', EditSoftwareView.as_view(), name='editsoftware'),
+    path('software/delete/<int:id>', DelSoftwareView.as_view(), name='delsoftware'),
 
     path('customersoftware/', CustomerSoftwareView.as_view(), name='customersoftware'),
 ]

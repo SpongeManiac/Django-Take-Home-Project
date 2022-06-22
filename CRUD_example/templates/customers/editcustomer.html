@@ -4,8 +4,12 @@
 {% include "greeting.html" %}
 
 <div class="grey_frame">
+  {% if form.instance.id == None %}
+  <h2>New Customer</h2>
+  {% else %}
   <h2>Edit Customer</h2>
-  <form action="{% url 'editcustomer' form.instance.id %}" method="post">
+  {% endif %}
+  <form method="post">
     {% csrf_token %}
 
     {% if form.non_field_errors%}
@@ -31,7 +35,11 @@
     <p></p>
 
     <div class="submitWrapper">
+      {% if form.instance.id == None%}
+      <button type="submit">Create</button>
+      {% else %}
       <button type="submit">Update</button>
+      {% endif %}
       <button type="button" onclick="location.href = '/customers'">Cancel</button>
     </div>
   </form>

@@ -1,24 +1,32 @@
 
+from urllib.request import HTTPRedirectHandler
 from django.http import HttpResponseRedirect
 from django.views.generic import TemplateView, ListView, View
-from CRUD_example.models import Customer
 from django_tables2 import SingleTableView
 from django.views.generic.edit import FormView
 from django.utils.decorators import method_decorator
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
+from CRUD_example.models import (
+    Customer,
+    Software,
+
+)
 
 from CRUD_example.forms import (
+    EditSoftwareForm,
     RegisterForm,
     LoginForm,
     NewCustomerForm,
     EditCustomerForm,
+    NewSoftwareForm,
+    EditSoftwareForm,
 )
 
 from CRUD_example.tables import(
     CustomerTable,
-
+    SoftwareTable,
 )
 
 class IndexView(TemplateView):
@@ -67,11 +75,6 @@ class LogoutView(View):
             logout(request)
         return redirect('index')
 
-
-@method_decorator(login_required, name='dispatch')
-class SoftwareView(TemplateView):
-    template_name = 'software.html'
-
 @method_decorator(login_required, name='dispatch')
 class CustomersView(SingleTableView):
     model = Customer
@@ -80,7 +83,7 @@ class CustomersView(SingleTableView):
 
 @method_decorator(login_required, name='dispatch')
 class NewCustomerView(FormView):
-    template_name = 'customers/newcustomer.html'
+    template_name = 'customers/editcustomer.html'
     form_class = NewCustomerForm
     success_url = '/customers'
 
@@ -100,7 +103,7 @@ class EditCustomerView(FormView):
 
     def post(self, request, *args, **kwargs):
         self.id = kwargs.get('id', -1)
-        return super(FormView, self).post(request, args, kwargs)
+        return super(FormView, self).post(request, *args, **kwargs)
 
     def get_form(self, form_class=None):
         if form_class is None:
@@ -127,6 +130,61 @@ class DelCustomerView(View):
                 customer.delete()
         return redirect('customers')
 
+
+@method_decorator(login_required, name='dispatch')
+class SoftwareView(SingleTableView):
+    model = Software
+    table_class = SoftwareTable
+    template_name = 'software/software.html'
+
+@method_decorator(login_required, name='dispatch')
+class NewSoftwareView(FormView):
+    template_name = 'software/editsoftware.html'
+    form_class = NewSoftwareForm
+    success_url = '/software'
+
+    def form_valid(self, form):
+        form.save()
+        return HttpResponseRedirect(self.get_success_url())
+
+@method_decorator(login_required, name='dispatch')
+class EditSoftwareView(FormView):
+    template_name = 'software/editsoftware.html'
+    form_class = EditSoftwareForm
+    success_url = '/software'
+
+    def get(self, request, *args, **kwargs):
+        self.id = kwargs.get('id', -1)
+        return super(FormView, self).get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.id = kwargs.get('id', -1)
+        return super(FormView, self).post(request, *args, **kwargs)
+
+    def get_form(self, form_class=None):
+        if form_class is None:
+            form_class = self.get_form_class()
+        
+        if self.id != -1:
+            software = Software.objects.filter(pk=self.id)
+            if software.exists():
+                return form_class(instance=software.first(), **self.get_form_kwargs())
+        return super().get_form(form_class)
+
+    def form_valid(self, form):
+        form.save(self.id)
+        return HttpResponseRedirect(self.get_success_url())
+
+@method_decorator(login_required, name='dispatch')
+class DelSoftwareView(View):
+
+    def get(self, request, *args, **kwargs):
+        self.id = kwargs.get('id', -1)
+        if self.id != -1:
+            software = Software.objects.filter(pk=self.id)
+            if software.exists():
+                software.delete()
+        return redirect('software')
 
 @method_decorator(login_required, name='dispatch')
 class CustomerSoftwareView(TemplateView):

@@ -45,3 +45,8 @@
     border-radius: 5px;
     color: white;
 }
+
+.softwareImage{
+    max-width: 2em;
+    margin: .5em;
+}

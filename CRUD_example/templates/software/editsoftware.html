@@ -1,0 +1,79 @@
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/forms/forms.css' %}">
+{% include "greeting.html" %}
+
+<div class="grey_frame">
+  {% if form.instance.id == None %}
+  <h2>New Software</h2>
+  {% else %}
+  <h2>Edit Software</h2>
+  {% endif %}
+  <form method="post">
+    {% csrf_token %}
+
+    {% if form.non_field_errors%}
+      <div class="errorWrapper">
+      {{ form.non_field_errors }}
+      </div>
+    {% endif %}
+    
+    <p></p>
+
+    <div class="fieldWrapper">
+      {% if form.name.errors%}
+      <div class="errorWrapper">
+        {{ form.name.errors }}
+      </div>
+      {% endif %}
+      <div class="inputWrapper">
+        {{ form.name.label_tag }}
+        {{ form.name }}
+      </div>
+    </div>
+
+    <p></p>
+
+    <div class="fieldWrapper">
+        {% if form.image.errors%}
+        <div class="errorWrapper">
+          {{ form.image.errors }}
+        </div>
+        {% endif %}
+        <div class="inputWrapper">
+          {{ form.image.label_tag }}
+          {{ form.image }}
+          <button id="softwareImageButton" type="button">Load</button>
+        </div>
+        <div class="softwareImageWrapper">
+            <img id="softwareImageID" class="softwareImage" src='{{ form.instance.image }}'/>
+        </div>
+      </div>
+
+    <p></p>
+
+    <div class="submitWrapper">
+      {% if form.instance.id == None%}
+      <button type="submit">Create</button>
+      {% else %}
+      <button type="submit">Update</button>
+      {% endif %}
+      <button type="button" onclick="location.href = '/software'">Cancel</button>
+    </div>
+  </form>
+</div>
+
+<script>
+    img_field = document.getElementById("id_image")
+    img_field.onkeyup = function(){
+        img = document.getElementById("softwareImageID");
+        url = img_field.value;
+        img.src = url;
+    }
+    btn = document.getElementById("softwareImageButton");
+    btn.onclick = function(){
+        img = document.getElementById("softwareImageID");
+        url = img_field.value;
+        img.src = url;
+    }
+</script>
