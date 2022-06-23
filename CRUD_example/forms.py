@@ -149,19 +149,26 @@ class EditSoftwareForm(forms.ModelForm):
             self.add_error('name', ValidationError(_('Name must have at least 1 character')))
 
         h = httplib2.Http()
-        response, cont = h.request(i, "HEAD", redirections=10)
-        if response.status == 200:
-            type = response['content-type']
-            split_text = type.split('/')
-            if split_text[0] == 'image':
-                if split_text[1] in VALID_IMAGE_TYPES:
-                    self.image_valid = True
-                    cleaned_data['image'] = response['content-location']
+        try:
+            response, cont = h.request(i, "HEAD", redirections=10)
+            if response.status == 200:
+                type = response['content-type']
+                split_text = type.split('/')
+                if split_text[0] == 'image':
+                    if split_text[1] in VALID_IMAGE_TYPES:
+                        self.image_valid = True
+                        cleaned_data['image'] = response['content-location']
+                        print(cleaned_data['image'])
+                        return cleaned_data
+                    else:
+                        self.add_error('image', ValidationError(_('Image is not of type PNG, JPG, or JPEG')))
                 else:
-                    self.add_error('image', ValidationError(_('Image is not of type PNG, JPG, or JPEG')))
+                    self.add_error('image', ValidationError(_('URL is not an image.')))
             else:
-                self.add_error('image', ValidationError(_('URL is not an image.')))
-        else:
+                self.add_error('image', ValidationError(_('URL is not valid.')))
+        except httplib2.ServerNotFoundError:
+            self.add_error('image', ValidationError(_('URL is not valid.')))
+        except httplib2.RedirectLimit:
             self.add_error('image', ValidationError(_('URL is not valid.')))
         self.image_valid = False
         return cleaned_data
