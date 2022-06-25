@@ -1,4 +1,4 @@
-# Django-Take-Home-Project
+# Django Take-Home Project
 For this take-home project I was asked to impliment a CRUD system for several model types in Django without using the admin module to generate pages. As security was not apart of the requirements, I did not bother to encrypt password fields. However, this can easily be done with `django-cryptography`.
 
 # Packages
