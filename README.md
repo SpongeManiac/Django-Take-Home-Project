@@ -5,7 +5,6 @@ For this take-home project I was asked to impliment a CRUD system for several mo
 Some packages are required to run this project. A pip compatible list of required packages is included in `requirements.txt`:
 ```
 Django==4.0.5
-django_cryptography==1.1
 django_tables2==2.4.1
 djangorestframework==3.13.1
 httplib2==0.20.4
