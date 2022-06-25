@@ -25,16 +25,22 @@ class RegisterForm(forms.Form):
         #clean the data
         cleaned_data = super().clean()
         
-        #check if passwords match
-        p1 = cleaned_data['password1']
-        p2 = cleaned_data['password2']
+        #get vars
+        e = cleaned_data.get('email', -1)
+        p1 = cleaned_data.get('password1', -1)
+        p2 = cleaned_data.get('password2', -1)
 
-        if len(p1) <= 5 or len(p2) <= 5:
-            self.add_error(None, ValidationError(_('Password must be at least 6 characters long.')))
+        if isinstance(e, str):
+            if len(e) <= 3:
+                self.add_error('email', ValidationError(_('Please enter a valid email.')))
+        
+        if isinstance(p1, str):
+            if len(p1) <= 5 or len(p2) <= 5:
+                self.add_error(None, ValidationError(_('Password must be at least 6 characters long.')))
 
-        #check if p1 == p2
-        if not p1 == p2:
-            self.add_error(None, ValidationError(_('Passwords do not match.')))
+            #check if p1 == p2
+            if not p1 == p2:
+                self.add_error(None, ValidationError(_('Passwords do not match.')))
         
         return cleaned_data
 
@@ -54,15 +60,16 @@ class LoginForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
 
-        e = cleaned_data['email']
-        p = cleaned_data['password']
+        e = cleaned_data.get('email', -1)
+        p = cleaned_data.get('password', -1)
 
-        if len(e) == 0:
-            self.add_error('email', ValidationError(_('Must have email')))
-
-        if len(p) <= 5:
-            self.add_error('password', ValidationError(_('Password must be at least 6 characters long.')))
-
+        if isinstance(e, str):
+            if len(e) <= 3:
+                self.add_error('email', ValidationError(_('Please enter a valid email.')))
+        if isinstance(p, str):
+            if len(p) <= 5:
+                self.add_error('password', ValidationError(_('Password must be at least 6 characters long.')))
+        
         return cleaned_data
 
     def auth(self):
