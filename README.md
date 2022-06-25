@@ -6,7 +6,6 @@ Some packages are required to run this project. A pip compatible list of require
 ```
 Django==4.0.5
 django_tables2==2.4.1
-djangorestframework==3.13.1
 httplib2==0.20.4
 ```
 
