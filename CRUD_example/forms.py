@@ -88,9 +88,11 @@ class NewCustomerForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
 
-        n = cleaned_data['name']
-        if len(n) <= 0:
-            self.add_error('name', ValidationError(_('Name must have at least 1 character')))
+        n = cleaned_data.get('name', -1)
+
+        if isinstance(n, str):
+            if len(n) <= 0:
+                self.add_error('name', ValidationError(_('Name must have at least 1 character')))
 
         return cleaned_data
     
@@ -107,8 +109,10 @@ class EditCustomerForm(forms.ModelForm):
         cleaned_data = super().clean()
 
         n = cleaned_data['name']
-        if len(n) <= 0:
-            self.add_error('name', ValidationError(_('Name must have at least 1 character')))
+
+        if isinstance(n, str):
+            if len(n) <= 0:
+                self.add_error('name', ValidationError(_('Name must have at least 1 character')))
         
         return cleaned_data
 
@@ -125,11 +129,38 @@ class NewSoftwareForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
 
-        n = cleaned_data['name']
-        i = cleaned_data['image']
+        n = cleaned_data.get('name', -1)
+        i = cleaned_data.get('image', -1)
 
-        if len(n) <= 0:
-            self.add_error('name', ValidationError(_('Name must have at least 1 character')))
+        if isinstance(n, str):
+            if len(n) <= 0:
+                self.add_error('name', ValidationError(_('Name must have at least 1 character')))
+
+        if isinstance(i, str):
+            h = httplib2.Http()
+            try:
+                response, content = h.request(i, "HEAD", redirections=10)
+                if response.status == 200:
+                    type = response['content-type']
+                    split_text = type.split('/')
+                    print(split_text)
+                    if split_text[0] == 'image':
+                        if split_text[1] in VALID_IMAGE_TYPES:
+                            cleaned_data['image'] = response['content-location']
+                            print(cleaned_data['image'])
+                            return cleaned_data
+                        else:
+                            self.add_error('image', ValidationError(_('Image is not of type PNG, JPG, or JPEG.')))
+                    else:
+                        self.add_error('image', ValidationError(_('URL is not an image. Expected \'image/(png, jpg, jpeg)\', got \''+type+'\' instead.')))
+                else:
+                    self.add_error('image', ValidationError(_('URL is not valid.')))
+            except httplib2.ServerNotFoundError:
+                self.add_error('image', ValidationError(_('URL is not valid.')))
+            except httplib2.RedirectLimit:
+                self.add_error('image', ValidationError(_('URL exceeded max redirects (10).')))
+            except:
+                self.add_error('image', ValidationError(_('URL is not valid.')))
 
         return cleaned_data
     
@@ -145,38 +176,41 @@ class EditSoftwareForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
 
-        n = cleaned_data['name']
-        i = cleaned_data['image']
+        n = cleaned_data.get('name', -1)
+        i = cleaned_data.get('image', -1)
 
-        if len(n) <= 0:
-            self.add_error('name', ValidationError(_('Name must have at least 1 character')))
+        if isinstance(n, str):
+            if len(n) <= 0:
+                self.add_error('name', ValidationError(_('Name must have at least 1 character.')))
 
-        h = httplib2.Http()
-        try:
-            response, cont = h.request(i, "HEAD", redirections=10)
-            if response.status == 200:
-                type = response['content-type']
-                split_text = type.split('/')
-                if split_text[0] == 'image':
-                    if split_text[1] in VALID_IMAGE_TYPES:
-                        self.image_valid = True
-                        cleaned_data['image'] = response['content-location']
-                        print(cleaned_data['image'])
-                        return cleaned_data
+        if isinstance(i, str):
+            h = httplib2.Http()
+            try:
+                response, content = h.request(i, "HEAD", redirections=10)
+                if response.status == 200:
+                    type = response['content-type']
+                    split_text = type.split('/')
+                    if split_text[0] == 'image':
+                        if split_text[1] in VALID_IMAGE_TYPES:
+                            cleaned_data['image'] = response['content-location']
+                            print(cleaned_data['image'])
+                            return cleaned_data
+                        else:
+                            self.add_error('image', ValidationError(_('Image is not of type PNG, JPG, or JPEG.')))
                     else:
-                        self.add_error('image', ValidationError(_('Image is not of type PNG, JPG, or JPEG')))
+                        self.add_error('image', ValidationError(_('URL is not an image.')))
                 else:
-                    self.add_error('image', ValidationError(_('URL is not an image.')))
-            else:
+                    self.add_error('image', ValidationError(_('URL is not valid.')))
+            except httplib2.ServerNotFoundError:
                 self.add_error('image', ValidationError(_('URL is not valid.')))
-        except httplib2.ServerNotFoundError:
-            self.add_error('image', ValidationError(_('URL is not valid.')))
-        except httplib2.RedirectLimit:
-            self.add_error('image', ValidationError(_('URL is not valid.')))
-        self.image_valid = False
+            except httplib2.RedirectLimit:
+                self.add_error('image', ValidationError(_('URL exceeded max redirects (10).')))
+            except:
+                self.add_error('image', ValidationError(_('URL is not valid.')))
         return cleaned_data
 
     def valid_image(self):
+
         self.clean()
         return self.image_valid
 
@@ -196,12 +230,12 @@ class NewCustomerSoftwareForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
 
-        c = cleaned_data['customer']
-        s = cleaned_data['software']
+        c = cleaned_data.get('customer', -1)
+        s = cleaned_data.get('software', -1)
 
-        if not c:
+        if not isinstance(c, Customer):
             self.add_error('customer', ValidationError(_('Please choose a customer.')))
-        if not s:
+        if not isinstance(s, Software):
             self.add_error('software', ValidationError(_('Please choose a software.')))
 
         return cleaned_data
@@ -226,12 +260,12 @@ class EditCustomerSoftwareForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
 
-        c = cleaned_data['customer']
-        s = cleaned_data['software']
+        c = cleaned_data.get('customer', -1)
+        s = cleaned_data.get('software', -1)
 
-        if not c:
+        if not isinstance(c, Customer):
             self.add_error('customer', ValidationError(_('Please choose a customer.')))
-        if not s:
+        if not isinstance(s, Software):
             self.add_error('software', ValidationError(_('Please choose a software.')))
         
         return cleaned_data
