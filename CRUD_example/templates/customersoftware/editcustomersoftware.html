@@ -1,0 +1,62 @@
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/forms/forms.css' %}">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+{% include "greeting.html" %}
+
+<div class="grey_frame">
+  {% if form.instance.id == None %}
+  <h2>New Customer Software Relation</h2>
+  {% else %}
+  <h2>Edit Customer Software Relation</h2>
+  {% endif %}
+  <form method="post">
+    {% csrf_token %}
+
+    {% if form.non_field_errors%}
+      <div class="errorWrapper">
+      {{ form.non_field_errors }}
+      </div>
+    {% endif %}
+    
+    <p></p>
+
+    <div class="fieldWrapper">
+      {% if form.customer.errors%}
+      <div class="errorWrapper">
+        {{ form.customer.errors }}
+      </div>
+      {% endif %}
+      <div class="inputWrapper">
+        {{ form.customer.label_tag }}
+        {{ form.customer }}
+      </div>
+    </div>
+
+    <p></p>
+
+    <div class="fieldWrapper">
+      {% if form.software.errors%}
+      <div class="errorWrapper">
+        {{ form.software.errors }}
+      </div>
+      {% endif %}
+      <div class="inputWrapper">
+        {{ form.software.label_tag }}
+        {{ form.software }}
+      </div>
+    </div>
+
+    <p></p>
+
+    <div class="submitWrapper">
+      {% if form.instance.id == None%}
+      <button type="submit">Create</button>
+      {% else %}
+      <button type="submit">Update</button>
+      {% endif %}
+      <button type="button" onclick="location.href = '/customersoftware'">Cancel</button>
+    </div>
+  </form>
+</div>

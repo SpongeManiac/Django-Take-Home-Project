@@ -59,11 +59,16 @@ class Customer(models.Model):
     name = models.CharField(max_length=255)
     date_created = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return self.name
+
 class Software(models.Model):
     name = models.CharField(max_length=255)
     image = models.URLField(max_length=512)
     date_added = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return self.name
 
 class CustomerSoftware(models.Model):
     cid = models.ForeignKey("Customer", on_delete=models.CASCADE)

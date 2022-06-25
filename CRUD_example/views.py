@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from CRUD_example.models import (
     Customer,
+    CustomerSoftware,
     Software,
 
 )
@@ -22,11 +23,14 @@ from CRUD_example.forms import (
     EditCustomerForm,
     NewSoftwareForm,
     EditSoftwareForm,
+    NewCustomerSoftwareForm,
+    EditCustomerSoftwareForm,
 )
 
 from CRUD_example.tables import(
     CustomerTable,
     SoftwareTable,
+    CustomerSoftwareTable,
 )
 
 class IndexView(TemplateView):
@@ -187,5 +191,60 @@ class DelSoftwareView(View):
         return redirect('software')
 
 @method_decorator(login_required, name='dispatch')
-class CustomerSoftwareView(TemplateView):
-    template_name = 'customersoftware.html'
+class CustomerSoftwareView(SingleTableView):
+    model = CustomerSoftware
+    table_class = CustomerSoftwareTable
+    template_name = 'customersoftware/customersoftware.html'
+
+@method_decorator(login_required, name='dispatch')
+class NewCustomerSoftwareView(FormView):
+    template_name = 'customersoftware/editcustomersoftware.html'
+    form_class = NewCustomerSoftwareForm
+    success_url = '/customersoftware'
+
+    def form_valid(self, form):
+        form.save()
+        return HttpResponseRedirect(self.get_success_url())
+
+@method_decorator(login_required, name='dispatch')
+class EditCustomerSoftwareView(FormView):
+    template_name = 'customersoftware/editcustomersoftware.html'
+    form_class = EditCustomerSoftwareForm
+    success_url = '/customersoftware'
+
+    def get(self, request, *args, **kwargs):
+        self.id = kwargs.get('id', -1)
+        return super(FormView, self).get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.id = kwargs.get('id', -1)
+        return super(FormView, self).post(request, *args, **kwargs)
+
+    def get_form(self, form_class=None):
+        if form_class is None:
+            form_class = self.get_form_class()
+        
+        if self.id != -1:
+            customerSoftware = CustomerSoftware.objects.filter(pk=self.id)
+            if customerSoftware.exists():
+                customerSoftware = customerSoftware.first()
+                form = form_class(instance=customerSoftware, **self.get_form_kwargs())
+                form.fields['customer'].initial = customerSoftware.cid
+                form.fields['software'].initial = customerSoftware.sid
+                return form
+        return super().get_form(form_class)
+
+    def form_valid(self, form):
+        form.save(self.id)
+        return HttpResponseRedirect(self.get_success_url())
+
+@method_decorator(login_required, name='dispatch')
+class DelCustomerSoftwareView(View):
+
+    def get(self, request, *args, **kwargs):
+        self.id = kwargs.get('id', -1)
+        if self.id != -1:
+            customerSoftware = CustomerSoftware.objects.filter(pk=self.id)
+            if customerSoftware.exists():
+                customerSoftware.delete()
+        return redirect('software')

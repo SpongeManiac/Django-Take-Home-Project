@@ -1,12 +1,8 @@
-from urllib import request
 from django import forms
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.forms import UserCreationForm
 from django.utils.translation import gettext as _
-from django.forms.utils import ErrorList
 from django.core.exceptions import ValidationError
 from CRUD_example.models import *
-
 from urllib.parse import urlparse
 import httplib2
 
@@ -180,4 +176,60 @@ class EditSoftwareForm(forms.ModelForm):
     def save(self, id):
         software = Software.objects.filter(pk=id)
         if software.exists():
-            software.update(name = self.cleaned_data['name'], image=self.cleaned_data['image'])  
+            software.update(name = self.cleaned_data['name'], image=self.cleaned_data['image'])
+
+class NewCustomerSoftwareForm(forms.ModelForm):
+    customer = forms.ModelChoiceField(queryset=Customer.objects.all())
+    software = forms.ModelChoiceField(queryset=Software.objects.all())
+
+    class Meta:
+        model = CustomerSoftware
+        fields = ('customer', 'software')
+    
+    def clean(self):
+        cleaned_data = super().clean()
+
+        c = cleaned_data['customer']
+        s = cleaned_data['software']
+
+        if not c:
+            self.add_error('customer', ValidationError(_('Please choose a customer.')))
+        if not s:
+            self.add_error('software', ValidationError(_('Please choose a software.')))
+
+        return cleaned_data
+    
+    def save(self):
+        customerSoftware = CustomerSoftware(cid=self.cleaned_data['customer'], sid=self.cleaned_data['software'])
+        customerSoftware.save()
+
+    def update(self, id):
+        customerSoftware = CustomerSoftware.objects.filter(pk=id)
+        if customerSoftware.exists():
+            customerSoftware.update(cid=self.cleaned_data['customer'], sid=self.cleaned_data['software'])
+
+class EditCustomerSoftwareForm(forms.ModelForm):
+    customer = forms.ModelChoiceField(queryset=Customer.objects.all())
+    software = forms.ModelChoiceField(queryset=Software.objects.all())
+
+    class Meta:
+        model = CustomerSoftware
+        fields = ('customer', 'software')
+    
+    def clean(self):
+        cleaned_data = super().clean()
+
+        c = cleaned_data['customer']
+        s = cleaned_data['software']
+
+        if not c:
+            self.add_error('customer', ValidationError(_('Please choose a customer.')))
+        if not s:
+            self.add_error('software', ValidationError(_('Please choose a software.')))
+        
+        return cleaned_data
+
+    def save(self, id):
+        customerSoftware = CustomerSoftware.objects.filter(pk=id)
+        if customerSoftware.exists():
+            customerSoftware.update(cid=self.cleaned_data['customer'], sid=self.cleaned_data['software'])

@@ -1,0 +1,14 @@
+{% load static %}
+{% load render_table from django_tables2 %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/forms/forms.css' %}">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+{% include "greeting.html" %}
+
+<div class="listWrapper">
+    <div class="listTitleWrapper">
+        <h1>Customer Software</h1>
+        <button onclick="location.href = '/customersoftware/create'">Add New</button>
+    </div>
+    {% render_table table %}
+</div>
