@@ -1,9 +1,8 @@
 from django import forms
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate
 from django.utils.translation import gettext as _
 from django.core.exceptions import ValidationError
 from CRUD_example.models import *
-from urllib.parse import urlparse
 import httplib2
 
 VALID_IMAGE_TYPES = [

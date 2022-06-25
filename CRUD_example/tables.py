@@ -1,5 +1,4 @@
 import django_tables2 as tables
-import django_tables2.utils as A
 from CRUD_example.models import(
     Customer,
     Software,

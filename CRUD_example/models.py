@@ -1,11 +1,7 @@
-from rest_framework import serializers
-from rest_framework.authtoken.models import Token
-
 from django.db import models
-from django.dispatch import receiver
-from django.db.models.signals import post_save
 from django.contrib.auth.models import (
-    BaseUserManager, AbstractBaseUser
+    BaseUserManager,
+    AbstractBaseUser,
 )
 
 class UserManager(BaseUserManager):

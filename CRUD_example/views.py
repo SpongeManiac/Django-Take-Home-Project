@@ -1,7 +1,6 @@
 
-from urllib.request import HTTPRedirectHandler
 from django.http import HttpResponseRedirect
-from django.views.generic import TemplateView, ListView, View
+from django.views.generic import TemplateView, View
 from django_tables2 import SingleTableView
 from django.views.generic.edit import FormView
 from django.utils.decorators import method_decorator
@@ -12,7 +11,6 @@ from CRUD_example.models import (
     Customer,
     CustomerSoftware,
     Software,
-
 )
 
 from CRUD_example.forms import (
