@@ -10,7 +10,7 @@ httplib2==0.20.4
 ```
 
 # Results
-Here are some screenshots of what the finished project looks like.
+Here are a couple of screenshots to give you a small preview of what the finished project looks like.
 
 ## Home Page
 ![Home Page](https://github.com/SpongeManiac/Django-Take-Home-Project/blob/main/Screenshots/Home.png?raw=true "Home Page")
