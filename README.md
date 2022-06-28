@@ -9,6 +9,18 @@ django_tables2==2.4.1
 httplib2==0.20.4
 ```
 
+# Results
+Here are some screenshots of what the finished project looks like.
+
+## Home Page
+![Home Page](https://github.com/SpongeManiac/Django-Take-Home-Project/blob/main/Screenshots/Home.png?raw=true "Home Page")
+
+## Home Page - Authenticated
+![Home Page - Authenticated](https://github.com/SpongeManiac/Django-Take-Home-Project/blob/main/Screenshots/Home%20-%20Authenticated.png?raw=true "Home Page - Authenticated")
+
+## Software Table
+![Software Table](https://github.com/SpongeManiac/Django-Take-Home-Project/blob/main/Screenshots/Software%20Table.png?raw=true "Software Table")
+
 # Take-Home Project Requirements
 In case you wish to replicate this project, here are the requirements I was given:
 
