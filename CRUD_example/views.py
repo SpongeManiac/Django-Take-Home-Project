@@ -245,4 +245,4 @@ class DelCustomerSoftwareView(View):
             customerSoftware = CustomerSoftware.objects.filter(pk=self.id)
             if customerSoftware.exists():
                 customerSoftware.delete()
-        return redirect('software')
+        return redirect('customersoftware')
