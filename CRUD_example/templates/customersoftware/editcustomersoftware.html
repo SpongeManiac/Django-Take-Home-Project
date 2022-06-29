@@ -54,7 +54,11 @@
       {% if form.instance.id == None%}
       <button type="submit">Create</button>
       {% else %}
-      <button type="submit">Update</button>
+        {% if form.instance.id == -1%}
+        <button type="submit" disabled>Update</button>
+        {% else %}
+        <button type="submit">Update</button>
+        {% endif %}
       {% endif %}
       <button type="button" onclick="location.href = '/customersoftware'">Cancel</button>
     </div>

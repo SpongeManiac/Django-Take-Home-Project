@@ -90,8 +90,8 @@ class NewCustomerForm(forms.Form):
         n = cleaned_data.get('name', -1)
 
         if isinstance(n, str):
-            if len(n) <= 0:
-                self.add_error('name', ValidationError(_('Name must have at least 1 character')))
+            if len(n) < 3:
+                self.add_error('name', ValidationError(_('Name must have at least 3 characters')))
 
         return cleaned_data
     
@@ -105,19 +105,33 @@ class EditCustomerForm(forms.ModelForm):
         fields = ('name', )
 
     def clean(self):
+        if self.instance.id == -1:
+            for field in self.errors.keys():
+                self.errors[field] = []
+            return []
+
         cleaned_data = super().clean()
 
-        n = cleaned_data['name']
+        n = cleaned_data.get('name', -1)
 
         if isinstance(n, str):
-            if len(n) <= 0:
-                self.add_error('name', ValidationError(_('Name must have at least 1 character')))
+            if len(n) < 3:
+                self.add_error('name', ValidationError(_('Name must have at least 3 characters.')))
         
         return cleaned_data
 
-    def save(self, id):
-        customer = Customer.objects.filter(pk=id)
+    def no_instance(self):
+        self.cleaned_data = []
+        for field in self.fields.keys():
+            self.fields[field].disabled = True
+        self.add_error(None, ValidationError(_('Not a valid id. Please edit a valid Customer.')))
+
+    def save(self):
+        # An id with no matches is possible, in which case nothing will happen.
+        customer = Customer.objects.filter(id=self.instance.id)
+        # Check if customer exists
         if customer.exists():
+            # Customer exists, update it with values in form
             customer.update(name = self.cleaned_data['name'])
 
 class NewSoftwareForm(forms.ModelForm):
@@ -173,6 +187,11 @@ class EditSoftwareForm(forms.ModelForm):
         fields = ('name', 'image')
 
     def clean(self):
+        if self.instance.id == -1:
+            for field in self.errors.keys():
+                self.errors[field] = []
+            return []
+
         cleaned_data = super().clean()
 
         n = cleaned_data.get('name', -1)
@@ -209,12 +228,17 @@ class EditSoftwareForm(forms.ModelForm):
         return cleaned_data
 
     def valid_image(self):
-
         self.clean()
         return self.image_valid
 
-    def save(self, id):
-        software = Software.objects.filter(pk=id)
+    def no_instance(self):
+        self.cleaned_data = []
+        for field in self.fields.keys():
+            self.fields[field].disabled = True
+        self.add_error(None, ValidationError(_('Not a valid id. Please edit a valid Software.')))
+
+    def save(self):
+        software = Software.objects.filter(id=self.instance.id)
         if software.exists():
             software.update(name = self.cleaned_data['name'], image=self.cleaned_data['image'])
 
@@ -244,7 +268,7 @@ class NewCustomerSoftwareForm(forms.ModelForm):
         customerSoftware.save()
 
     def update(self, id):
-        customerSoftware = CustomerSoftware.objects.filter(pk=id)
+        customerSoftware = CustomerSoftware.objects.filter(id=id)
         if customerSoftware.exists():
             customerSoftware.update(cid=self.cleaned_data['customer'], sid=self.cleaned_data['software'])
 
@@ -257,6 +281,11 @@ class EditCustomerSoftwareForm(forms.ModelForm):
         fields = ('customer', 'software')
     
     def clean(self):
+        if self.instance.id == -1:
+            for field in self.errors.keys():
+                self.errors[field] = []
+            return []
+        
         cleaned_data = super().clean()
 
         c = cleaned_data.get('customer', -1)
@@ -269,7 +298,13 @@ class EditCustomerSoftwareForm(forms.ModelForm):
         
         return cleaned_data
 
-    def save(self, id):
-        customerSoftware = CustomerSoftware.objects.filter(pk=id)
+    def no_instance(self):
+        self.cleaned_data = []
+        for field in self.fields.keys():
+            self.fields[field].disabled = True
+        self.add_error(None, ValidationError(_('Not a valid id. Please edit a valid CustomerSoftware.')))
+
+    def save(self):
+        customerSoftware = CustomerSoftware.objects.filter(id=id)
         if customerSoftware.exists():
             customerSoftware.update(cid=self.cleaned_data['customer'], sid=self.cleaned_data['software'])
