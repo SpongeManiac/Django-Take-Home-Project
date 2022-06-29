@@ -201,7 +201,11 @@ class EditCustomerView(FormView):
         # added to the request object.
         # Safeguard against non-existing 'id' with a default value
         self.id = kwargs.get('id', -1)
-        
+        # Check if object with this id exists
+        customer = Customer.objects.filter(id=self.id)
+        if not customer.exists():
+            # Customer does not exist, redirect to 'success_url'
+            return redirect(self.get_success_url())
         # Continue normally by calling the parent class's 'get' function.
         return super(FormView, self).get(request, *args, **kwargs)
 
@@ -287,6 +291,9 @@ class EditSoftwareView(FormView):
 
     def get(self, request, *args, **kwargs):
         self.id = kwargs.get('id', -1)
+        software = Software.objects.filter(id=self.id)
+        if not software.exists():
+            return redirect(self.get_success_url())
         return super(FormView, self).get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
@@ -352,6 +359,9 @@ class EditCustomerSoftwareView(FormView):
 
     def get(self, request, *args, **kwargs):
         self.id = kwargs.get('id', -1)
+        customersoftware = CustomerSoftware.objects.filter(id=self.id)
+        if not customersoftware.exists():
+            return redirect(self.get_success_url())
         return super(FormView, self).get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
