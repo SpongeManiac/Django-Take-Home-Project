@@ -204,7 +204,9 @@ class EditCustomerView(FormView):
         # Check if object with this id exists
         customer = Customer.objects.filter(id=self.id)
         if not customer.exists():
-            # Customer does not exist, redirect to 'success_url'
+            # Customer does not exist, set id to be -1
+            self.id = -1
+            # redirect to 'success_url'
             return redirect(self.get_success_url())
         # Continue normally by calling the parent class's 'get' function.
         return super(FormView, self).get(request, *args, **kwargs)
@@ -213,7 +215,14 @@ class EditCustomerView(FormView):
     def post(self, request, *args, **kwargs):
         # Set 'id' variable from the url path.
         self.id = kwargs.get('id', -1)
-        # Continue normally
+        # Check if object with this id exists
+        customer = Customer.objects.filter(id=self.id)
+        if not customer.exists():
+            # Customer does not exist, set id to be -1
+            self.id = -1
+            # redirect to 'success_url'
+            return redirect(self.get_success_url())
+        # Continue normally by calling the parent class's 'post' function.
         return super(FormView, self).post(request, *args, **kwargs)
 
     # 'get_form' is the function that creates and returns the form
@@ -235,6 +244,7 @@ class EditCustomerView(FormView):
             if customer.exists():
                 # 'Customer' object exists, return a form populated with the object through the 'instance' variable
                 return form_class(instance=customer.first(), **self.get_form_kwargs())
+
         # Something didn't exist, create a form with an instance that has an invalid id. This ensures the template
         # will still display the correct text, but nothing will be updated if form is somehow posted.
         form = form_class(instance=Customer(id=-1), **self.get_form_kwargs())
@@ -293,21 +303,27 @@ class EditSoftwareView(FormView):
         self.id = kwargs.get('id', -1)
         software = Software.objects.filter(id=self.id)
         if not software.exists():
+            self.id = -1
             return redirect(self.get_success_url())
         return super(FormView, self).get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         self.id = kwargs.get('id', -1)
+        software = Software.objects.filter(id=self.id)
+        if not software.exists():
+            self.id = -1
+            return redirect(self.get_success_url())
         return super(FormView, self).post(request, *args, **kwargs)
 
     def get_form(self, form_class=None):
         if form_class is None:
             form_class = self.get_form_class()
         
+        software = Software.objects.filter(id=self.id)
         if self.id != -1:
-            software = Software.objects.filter(id=self.id)
             if software.exists():
                 return form_class(instance=software.first(), **self.get_form_kwargs())
+
         form = form_class(instance=Software(id=-1), **self.get_form_kwargs())
         form.no_instance()
         return form
@@ -361,11 +377,16 @@ class EditCustomerSoftwareView(FormView):
         self.id = kwargs.get('id', -1)
         customersoftware = CustomerSoftware.objects.filter(id=self.id)
         if not customersoftware.exists():
+            self.id = -1
             return redirect(self.get_success_url())
         return super(FormView, self).get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         self.id = kwargs.get('id', -1)
+        customersoftware = CustomerSoftware.objects.filter(id=self.id)
+        if not customersoftware.exists():
+            self.id = -1
+            return redirect(self.get_success_url())
         return super(FormView, self).post(request, *args, **kwargs)
 
     def get_form(self, form_class=None):
