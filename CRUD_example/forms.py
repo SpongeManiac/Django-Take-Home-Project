@@ -35,7 +35,8 @@ VALID_IMAGE_TYPES = [
     'jpg',
 ]
 
-def ValidateImage(self, url, cleaned_data):
+# 'validate_image' is used to validate that a url is an image
+def validate_image(self, url, cleaned_data):
     # Create an Http instance
     h = httplib2.Http()
     # Encapsulate in try/catch to prevent serverside errors
@@ -92,9 +93,9 @@ class RegisterForm(forms.Form):
         cleaned_data = super().clean()
         
         # Get cleaned variables
-        e = cleaned_data.get('email', -1)
-        p1 = cleaned_data.get('password1', -1)
-        p2 = cleaned_data.get('password2', -1)
+        e = cleaned_data.get('email', '')
+        p1 = cleaned_data.get('password1', '')
+        p2 = cleaned_data.get('password2', '')
 
         # Check if variable is a string
         if isinstance(e, str):
@@ -147,8 +148,8 @@ class LoginForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
 
-        e = cleaned_data.get('email', -1)
-        p = cleaned_data.get('password', -1)
+        e = cleaned_data.get('email', '')
+        p = cleaned_data.get('password', '')
 
         if isinstance(e, str):
             # Check if email is 
@@ -188,7 +189,7 @@ class NewCustomerForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
 
-        n = cleaned_data.get('name', -1)
+        n = cleaned_data.get('name', '')
 
         if isinstance(n, str):
             if len(n) < 3:
@@ -222,7 +223,7 @@ class EditCustomerForm(forms.ModelForm):
 
         cleaned_data = super().clean()
 
-        n = cleaned_data.get('name', -1)
+        n = cleaned_data.get('name', '')
 
         if isinstance(n, str):
             if len(n) < 3:
@@ -261,8 +262,8 @@ class NewSoftwareForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
 
-        n = cleaned_data.get('name', -1)
-        i = cleaned_data.get('image', -1)
+        n = cleaned_data.get('name', '')
+        i = cleaned_data.get('image', '')
 
         if isinstance(n, str):
             if len(n) < 1:
@@ -271,7 +272,8 @@ class NewSoftwareForm(forms.ModelForm):
             self.add_error('name', ValidationError(_('Name must be a string.')))
 
         if isinstance(i, str):
-            cleaned_data = ValidateImage(self, i, cleaned_data)
+            # Ensure that image url is a valid image
+            cleaned_data = validate_image(self, i, cleaned_data)
         else:
             self.add_error('image', ValidationError(_('Image must be a string.')))
 
@@ -294,8 +296,8 @@ class EditSoftwareForm(forms.ModelForm):
 
         cleaned_data = super().clean()
 
-        n = cleaned_data.get('name', -1)
-        i = cleaned_data.get('image', -1)
+        n = cleaned_data.get('name', '')
+        i = cleaned_data.get('image', '')
 
         if isinstance(n, str):
             if len(n) < 1:
@@ -304,7 +306,7 @@ class EditSoftwareForm(forms.ModelForm):
             self.add_error('name', ValidationError(_('Name must be a string.')))
 
         if isinstance(i, str):
-            cleaned_data = ValidateImage(self, i, cleaned_data)
+            cleaned_data = validate_image(self, i, cleaned_data)
         else:
             self.add_error('image', ValidationError(_('Image must be a string.')))
 
