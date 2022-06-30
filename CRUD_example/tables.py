@@ -14,7 +14,12 @@ from CRUD_example.models import(
 class CustomerTable(tables.Table):
     # Define a 'TemplateColumn' to create a column that uses a template for its cell
     # 'edit' is a column for editing or deleting each entry
-    edit = tables.TemplateColumn(template_name = "customers/customerButtons.html")
+    edit = tables.TemplateColumn(
+        # 'template_name' defines the template to be displayed in this column
+        template_name = "customers/customerButtons.html",
+        # 'orderable' defines whether this column can be sorted
+        orderable = False,
+        )
 
     # The 'Meta' class is used to define the data the table will display
     class Meta:
@@ -29,8 +34,8 @@ class CustomerTable(tables.Table):
 # 'SoftwareTable' displays 'Software' objects as a table
 class SoftwareTable(tables.Table):
     # An additional column is needed to display the 'Software' object's corresponding logo
-    logo = tables.TemplateColumn(template_name = 'software/softwareLogo.html')
-    edit = tables.TemplateColumn(template_name = 'software/softwareButtons.html')
+    logo = tables.TemplateColumn(template_name = 'software/softwareLogo.html', orderable = False)
+    edit = tables.TemplateColumn(template_name = 'software/softwareButtons.html', orderable = False)
 
     class Meta:
         model = Software
@@ -45,9 +50,9 @@ class CustomerSoftwareTable(tables.Table):
     customer_ID = tables.Column(accessor='cid.id', verbose_name='Customer ID')
     customer_Name = tables.Column(accessor='cid.name', verbose_name='Customer Name')
     software_ID= tables.Column(accessor='sid.id', verbose_name='Software ID')
-    logo = tables.TemplateColumn(template_name = 'customersoftware/softwareLogo.html')
+    logo = tables.TemplateColumn(template_name = 'customersoftware/softwareLogo.html', orderable = False)
     software_Name = tables.Column(accessor='sid.name', verbose_name='Software Name')
-    edit = tables.TemplateColumn(template_name = 'customersoftware/customersoftwareButtons.html')
+    edit = tables.TemplateColumn(template_name = 'customersoftware/customersoftwareButtons.html', orderable = False)
 
     class Meta:
         model = CustomerSoftware
