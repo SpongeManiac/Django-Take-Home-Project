@@ -331,6 +331,8 @@ class NewCustomerSoftwareForm(forms.ModelForm):
         fields = ('customer', 'software')
     
     def clean(self):
+        
+
         cleaned_data = super().clean()
 
         c = cleaned_data.get('customer', -1)
@@ -339,12 +341,12 @@ class NewCustomerSoftwareForm(forms.ModelForm):
         sValid = True
         
         # Ensure that the 'customer' field is a 'Customer' object
-        if not isinstance(c, Customer):
+        if not isinstance(c, Customer) or c.id == -1:
             self.add_error('customer', ValidationError(_('Please choose a customer.')))
             cValid = False
 
         # Ensure that the 'software' field is a 'Software' object
-        if not isinstance(s, Software):
+        if not isinstance(s, Software) or s.id == -1:
             self.add_error('software', ValidationError(_('Please choose a software.')))
             sValid = False
         
@@ -383,11 +385,11 @@ class EditCustomerSoftwareForm(forms.ModelForm):
         cValid = True
         sValid = True
 
-        if not isinstance(c, Customer):
+        if not isinstance(c, Customer) or c.id == -1:
             self.add_error('customer', ValidationError(_('Please choose a customer.')))
             cValid = False
 
-        if not isinstance(s, Software):
+        if not isinstance(s, Software) or s.id == -1:
             self.add_error('software', ValidationError(_('Please choose a software.')))
             sValid = False
 
