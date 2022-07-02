@@ -1,7 +1,6 @@
 # 'forms' contains the different form types and form fields
 # Forms are HTML forms that are used to submit data to the server
 # Fields are the inputs that appear in a form
-from xml.dom import ValidationErr
 from django import forms
 
 # 'authenticate' is used to check if user credentials are correct
@@ -336,25 +335,32 @@ class NewCustomerSoftwareForm(forms.ModelForm):
 
         c = cleaned_data.get('customer', -1)
         s = cleaned_data.get('software', -1)
-
+        cValid = True
+        sValid = True
+        
         # Ensure that the 'customer' field is a 'Customer' object
         if not isinstance(c, Customer):
             self.add_error('customer', ValidationError(_('Please choose a customer.')))
+            cValid = False
 
         # Ensure that the 'software' field is a 'Software' object
         if not isinstance(s, Software):
             self.add_error('software', ValidationError(_('Please choose a software.')))
+            sValid = False
+        
+        # Ensure both objects are valid
+        if cValid and sValid:
+	    # Check if relation already exists
+            rel = CustomerSoftware.objects.filter(cid=c, sid=s)
+            if rel.exists():
+                # Relation already exists, add error
+                self.add_error(None, ValidationError(_('This relation already exists.')))
 
         return cleaned_data
     
     def save(self):
         customerSoftware = CustomerSoftware(cid=self.cleaned_data['customer'], sid=self.cleaned_data['software'])
         customerSoftware.save()
-
-    def update(self, id):
-        customerSoftware = CustomerSoftware.objects.filter(id=id)
-        if customerSoftware.exists():
-            customerSoftware.update(cid=self.cleaned_data['customer'], sid=self.cleaned_data['software'])
 
 class EditCustomerSoftwareForm(forms.ModelForm):
     customer = forms.ModelChoiceField(queryset=Customer.objects.all())
@@ -374,12 +380,21 @@ class EditCustomerSoftwareForm(forms.ModelForm):
 
         c = cleaned_data.get('customer', -1)
         s = cleaned_data.get('software', -1)
+        cValid = True
+        sValid = True
 
         if not isinstance(c, Customer):
             self.add_error('customer', ValidationError(_('Please choose a customer.')))
-            
+            cValid = False
+
         if not isinstance(s, Software):
             self.add_error('software', ValidationError(_('Please choose a software.')))
+            sValid = False
+
+        if cValid and sValid:
+            rel = CustomerSoftware.objects.filter(cid=c, sid=s)
+            if rel.exists():
+                self.add_error(None, ValidationError(_('This relation already exists.')))
         
         return cleaned_data
 
