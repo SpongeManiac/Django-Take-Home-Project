@@ -329,7 +329,7 @@ class EditSoftwareView(FormView):
         return form
 
     def form_valid(self, form):
-        form.save(self.id)
+        form.save()
         return redirect(self.get_success_url())
 
 @method_decorator(login_required, name='dispatch')
@@ -411,7 +411,7 @@ class EditCustomerSoftwareView(FormView):
         return form
 
     def form_valid(self, form):
-        form.save(self.id)
+        form.save()
         return redirect(self.get_success_url())
 
 @method_decorator(login_required, name='dispatch')

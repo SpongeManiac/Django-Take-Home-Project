@@ -340,14 +340,20 @@ class NewCustomerSoftwareForm(forms.ModelForm):
         cValid = True
         sValid = True
         
-        # Ensure that the 'customer' field is a 'Customer' object
-        if not isinstance(c, Customer) or c.id == -1:
-            self.add_error('customer', ValidationError(_('Please choose a customer.')))
+        # Try to get objects selected by user
+        cQuery = Customer.objects.filter(id=c.id)
+        sQuery = Software.objects.filter(id=s.id)
+
+        # Check if the 'customer' field is a 'Customer' object that exists
+        if not isinstance(c, Customer) or not cQuery.exists():
+            # 'customer' is not a valid object, add error
+            self.add_error('customer', ValidationError(_('Please choose a valid customer.')))
             cValid = False
 
-        # Ensure that the 'software' field is a 'Software' object
-        if not isinstance(s, Software) or s.id == -1:
-            self.add_error('software', ValidationError(_('Please choose a software.')))
+        # Check if the 'software' field is a 'Software' object that exists
+        if not isinstance(s, Software) or not sQuery.exists():
+            # 'software' is not a valid object, add error
+            self.add_error('software', ValidationError(_('Please choose a valid software.')))
             sValid = False
         
         # Ensure both objects are valid
@@ -385,12 +391,15 @@ class EditCustomerSoftwareForm(forms.ModelForm):
         cValid = True
         sValid = True
 
-        if not isinstance(c, Customer) or c.id == -1:
-            self.add_error('customer', ValidationError(_('Please choose a customer.')))
+        cQuery = Customer.objects.filter(id=c.id)
+        sQuery = Software.objects.filter(id=s.id)
+
+        if not isinstance(c, Customer) or not cQuery.exists():
+            self.add_error('customer', ValidationError(_('Please choose a valid customer.')))
             cValid = False
 
-        if not isinstance(s, Software) or s.id == -1:
-            self.add_error('software', ValidationError(_('Please choose a software.')))
+        if not isinstance(s, Software) or not sQuery.exists():
+            self.add_error('software', ValidationError(_('Please choose a valid software.')))
             sValid = False
 
         if cValid and sValid:
@@ -407,6 +416,6 @@ class EditCustomerSoftwareForm(forms.ModelForm):
         self.add_error(None, ValidationError(_('Not a valid id. Please edit a valid CustomerSoftware.')))
 
     def save(self):
-        customerSoftware = CustomerSoftware.objects.filter(id=id)
+        customerSoftware = CustomerSoftware.objects.filter(id=self.instance.id)
         if customerSoftware.exists():
             customerSoftware.update(cid=self.cleaned_data['customer'], sid=self.cleaned_data['software'])
